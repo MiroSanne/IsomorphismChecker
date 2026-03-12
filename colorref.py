@@ -95,3 +95,20 @@ def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_
                     new_vertices_colours[vertex] = colour_counter
                     colour_counter += 1
     return new_vertices_colours, sig_table, colour_counter
+
+
+
+def count_isomorphism(D,I):
+
+    #Compute the coarsest stable colouring β of G = {G, H} that refines α(D, I)
+
+    if(unbalanced):
+        return 0
+    if(discreet):
+        return 1
+    # Choose a colour class C with | C | ≥ 4.
+    #Choose x ∈ C ∩ V(G).
+    # num = 0
+    # for all y ∈ C ∩ V (H):
+    #     num := num + CountIsomorphism(D + x, I + y)
+    return num
