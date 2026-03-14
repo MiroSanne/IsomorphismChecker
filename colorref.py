@@ -2,10 +2,7 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(path):
-   
-    with open(path) as f:
-        graphs = load_graph(f, Graph, True)
+def basic_colorref(graphs):
     answers = []
     
     #Setup
@@ -79,7 +76,7 @@ def basic_colorref(path):
         sorted_frequency = sorted(Counter(graph_colours).values())
         iteration = final_iterations[index]
         discreet = all(frequency == 1 for frequency in sorted_frequency)
-        answers.append((graphs_indexes, sorted_frequency, iteration, discreet))  
+        answers.append((graphs_indexes, sorted_frequency, iteration, discreet))
     return answers
 
 
@@ -99,16 +96,26 @@ def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_
 
 
 def count_isomorphism(D,I):
-
+    #TODO: get the two graphs
+    graphs = None
     #Compute the coarsest stable colouring β of G = {G, H} that refines α(D, I)
+    #TODO: Change basic_colourref to work when given a colouring already
+    answer = basic_colorref(graphs, colouring)
 
-    if(unbalanced):
+    if len(answer) != 1:
         return 0
-    if(discreet):
+    if answer[0][3]:
         return 1
-    # Choose a colour class C with | C | ≥ 4.
+
+    #TODO: get colour frequency out of basic_colorref with vertices
+    colour_frequency = []
+    #TODO: get the largest colour in colour frequency
+    #Choose a colour class C with | C | ≥ 4.
+    most_frequent = colour_frequency.pop()
     #Choose x ∈ C ∩ V(G).
-    # num = 0
-    # for all y ∈ C ∩ V (H):
-    #     num := num + CountIsomorphism(D + x, I + y)
+    #TODO: Get a vertex in graph 1 that's part of that colour class
+    num = 0
+    # TODO: Loop over vertices in graph 2 that's part of that colour class
+    for all y ∈ C ∩ V (H):
+        num = num + count_isomorphism(D + x, I + y)
     return num
