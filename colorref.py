@@ -1,38 +1,39 @@
+from django.template.defaultfilters import length
+
 from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(graphs):
-    answers = []
+def basic_colorref(graphs, colouring, counter):
     
     #Setup
     sig_table = {}
-    initalize_neighbours = tuple([0] * len(graphs[0].vertices[0].neighbours))
-    sig_table[(0,initalize_neighbours)] = 0
     colour_amount_collection: list[int] = []
     final_iterations: list[int] = []
     is_done:list[bool] = []
     all_vertices:dict[Vertex, int] = {}
     final_colours: list[list[int]] = []
-    
 
-    for graph in graphs:
-        vertices_colours = {vertex: 0 for vertex in graph.vertices}
-        all_vertices.update(vertices_colours)
-        colour_amount_collection.append(0)
+    last_stop = 0
+    for index, graph in enumerate(graphs):
+        all_vertices = colouring
+        length = len(graph.vertices)
+        graph_colours = list(all_vertices.values())[last_stop:last_stop + length]
+        unique_colours = len(set(graph_colours))
+        colour_amount_collection[index] = unique_colours
+        last_stop += length
         final_iterations.append(0)
         is_done.append(False)
 
     i=0
-    colour_counter = 1
-    old_colour_amount = 1
+    colour_counter = counter
+    old_colour_amount = sum(colour_amount_collection)
 
     #Colour refinement
     while True:
         i += 1
         #Update vertex colours
-        new_all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
-        all_vertices = new_all_vertices
+        all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
         
         #Get and store itteration
         last_stop = 0
@@ -47,7 +48,8 @@ def basic_colorref(graphs):
                 else:
                     colour_amount_collection[index] = unique_colours 
             last_stop += length
-        
+
+        #Todo: check if all case is redundant?
         if sum(colour_amount_collection) == old_colour_amount or all(colour_amount == 1 for colour_amount in colour_amount_collection):
             break
         
@@ -70,14 +72,11 @@ def basic_colorref(graphs):
     similiar_graphs = list(graph_colours_map.values())
 
     #Fill in the answer
-    for graphs_indexes in similiar_graphs:
-        index = graphs_indexes[0]
-        graph_colours = final_colours[index]
-        sorted_frequency = sorted(Counter(graph_colours).values())
-        iteration = final_iterations[index]
-        discreet = all(frequency == 1 for frequency in sorted_frequency)
-        answers.append((graphs_indexes, sorted_frequency, iteration, discreet))
-    return answers
+
+    same_class = len(similiar_graphs)==1
+    most_frequent_colour = max(Counter(final_colours[0]).items(), key=lambda tup: tup[0])
+    discreet = len(final_colours[0]) == len(set(final_colours[0]))
+    return same_class, discreet, most_frequent_colour, all_vertices, colour_counter
 
 
 def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_counter:int):
@@ -95,27 +94,27 @@ def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_
 
 
 
-def count_isomorphism(D,I):
-    #TODO: get the two graphs
-    graphs = None
-    #Compute the coarsest stable colouring β of G = {G, H} that refines α(D, I)
-    #TODO: Change basic_colourref to work when given a colouring already
-    answer = basic_colorref(graphs, colouring)
+def count_isomorphism(D, I, graphs, colouring, counter):
+    same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
 
-    if len(answer) != 1:
+    if not same_class:
         return 0
-    if answer[0][3]:
+    if discreet:
         return 1
 
-    #TODO: get colour frequency out of basic_colorref with vertices
-    colour_frequency = []
-    #TODO: get the largest colour in colour frequency
-    #Choose a colour class C with | C | ≥ 4.
-    most_frequent = colour_frequency.pop()
-    #Choose x ∈ C ∩ V(G).
-    #TODO: Get a vertex in graph 1 that's part of that colour class
+    last_stop = 0
+    graphs_colours= []
+    for graph in graphs:
+        length = len(graph.vertices)
+        graph_colours = all_vertices.items()[last_stop:last_stop+length]
+        graphs_colours.append(graph_colours)
+        last_stop += length
+
+    xs = [vertex for vertex, colour in graphs_colours[0] if colour == most_frequent_colour]
+    ys = [vertex for vertex, colour in graphs_colours[1] if colour == most_frequent_colour]
+    x = xs[0]
+    #TODO: change colour of vertex x and y in all_vertices
     num = 0
-    # TODO: Loop over vertices in graph 2 that's part of that colour class
-    for all y ∈ C ∩ V (H):
-        num = num + count_isomorphism(D + x, I + y)
+    for y in ys:
+        num = num + count_isomorphism(D + x, I + y, graphs, all_vertices, counter)
     return num
