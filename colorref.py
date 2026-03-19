@@ -20,7 +20,7 @@ def basic_colorref(graphs, colouring, counter):
         length = len(graph.vertices)
         graph_colours = list(all_vertices.values())[last_stop:last_stop + length]
         unique_colours = len(set(graph_colours))
-        colour_amount_collection[index] = unique_colours
+        colour_amount_collection.append(unique_colours)
         last_stop += length
         final_iterations.append(0)
         is_done.append(False)
@@ -74,7 +74,7 @@ def basic_colorref(graphs, colouring, counter):
     #Fill in the answer
 
     same_class = len(similiar_graphs)==1
-    most_frequent_colour = max(Counter(final_colours[0]).items(), key=lambda tup: tup[0])
+    most_frequent_colour = max(Counter(final_colours[0]).items(), key=lambda pair: pair[1])[0]
     discreet = len(final_colours[0]) == len(set(final_colours[0]))
     return same_class, discreet, most_frequent_colour, all_vertices, colour_counter
 
@@ -113,8 +113,11 @@ def count_isomorphism(D, I, graphs, colouring, counter):
     xs = [vertex for vertex, colour in graphs_colours[0] if colour == most_frequent_colour]
     ys = [vertex for vertex, colour in graphs_colours[1] if colour == most_frequent_colour]
     x = xs[0]
-    #TODO: change colour of vertex x and y in all_vertices
+    selected_colour = counter
+    counter += 1
+    all_vertices[x] = selected_colour
     num = 0
     for y in ys:
+        all_vertices[y] = selected_colour
         num = num + count_isomorphism(D + x, I + y, graphs, all_vertices, counter)
     return num

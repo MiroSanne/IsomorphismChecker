@@ -2,7 +2,7 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(path):
+def basic_colorref_old(path):
    
     with open(path) as f:
         graphs = load_graph(f, Graph, True)
@@ -34,7 +34,7 @@ def basic_colorref(path):
     while True:
         i += 1
         #Update vertex colours
-        new_all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
+        new_all_vertices, sig_table, colour_counter = single_iteration_old(all_vertices, sig_table, colour_counter)
         all_vertices = new_all_vertices
         
         #Get and store itteration
@@ -83,7 +83,7 @@ def basic_colorref(path):
     return answers
 
 
-def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_counter:int):
+def single_iteration_old(vertices_colours:dict[Vertex, int], sig_table:dict, colour_counter:int):
     new_vertices_colours = vertices_colours.copy()
     for  vertex in vertices_colours.keys():
                 colour = vertices_colours[vertex]
