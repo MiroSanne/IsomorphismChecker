@@ -14,8 +14,8 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
         counter: integer representing the next unused colour 
     Output: 
         same_class: bool 
-            True if all graphs are in the same equivalance class
-        discreet: bool
+            True if all graphs are in the same equivalence class
+        discrete: bool
             True if the colouring is discrete
         most_frequent_colour: int
             The colour that occurs most frequently
@@ -94,8 +94,8 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
 
     same_class = len(similiar_graphs)==1
     most_frequent_colour = max(Counter(final_colours[0]).items(), key=lambda pair: pair[1])[0]
-    discreet = len(final_colours[0]) == len(set(final_colours[0]))
-    return same_class, discreet, most_frequent_colour, all_vertices, colour_counter
+    discrete = len(final_colours[0]) == len(set(final_colours[0]))
+    return same_class, discrete, most_frequent_colour, all_vertices, colour_counter
 
 
 def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_counter:int):
