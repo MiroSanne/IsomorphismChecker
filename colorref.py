@@ -4,7 +4,26 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(graphs, colouring, counter):
+def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: int):
+    """
+    Apply the color refinement algorithm to a list of graphs.
+
+    Input:
+        graphs: list of Graphs
+        colouring: initial colouring represented by a dictionary {Vertex: int}
+        counter: integer representing the next unused colour 
+    Output: 
+        same_class: bool 
+            True if all graphs are in the same equivalance class
+        discreet: bool
+            True if the colouring is discrete
+        most_frequent_colour: int
+            The colour that occurs most frequently
+        all_vertices: dict[Vertex, int]
+            The final stable colouring
+        colour_counter: int
+            Updated colour for new colours
+    """
     
     #Setup
     sig_table = {}
