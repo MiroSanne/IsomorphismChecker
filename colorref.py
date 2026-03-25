@@ -2,7 +2,7 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int] = {}, counter: int = 0):
+def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: int = 0):
     """
     Apply the color refinement algorithm to a list of graphs.
 
@@ -61,7 +61,7 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int] = {}, count
         #Update vertex colours
         all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
         
-        #Get and store itteration
+        #Get and store iteration
         last_stop = 0
         for index, graph in enumerate(graphs):
             number_of_vertices = len(graph.vertices)
@@ -147,3 +147,70 @@ def count_isomorphism(D, I, graphs, colouring, counter):
         all_vertices[y] = selected_colour
         num = num + count_isomorphism(D + x, I + y, graphs, all_vertices, counter)
     return num
+
+
+
+def solver(file):
+    with open(file, 'r') as f:
+        graphs = load_graph(f, Graph, True)
+
+    if file.endswith("GIAut.grl.txt"):
+        print("Sets of isomorphic graphs:")
+        pairs = []
+        for index, first_graph in enumerate(graphs):
+            for index2, second_graph in enumerate(graphs):
+                if first_graph != second_graph:
+                    isomorphisms = count_isomorphism([],[],[first_graph,second_graph],{},0)
+                    if isomorphisms != 0:
+                        pairs.append((index,index2))
+        for group in groups_from_pairs(pairs):
+            print(group)
+
+        print("Graphs with automorphisms:")
+        for index, graph in enumerate(graphs):
+            automorphisms = count_isomorphism([], [], [graph, graph], {}, 0)
+            print(" " + index.__str__() + " : " + automorphisms.__str__())
+
+    elif file.endswith("Aut.grl.txt"):
+        print("Graphs with automorphisms:")
+        for index, graph in enumerate(graphs):
+            automorphisms = count_isomorphism([],[],[graph,graph],{},0)
+            print(" " + index.__str__() + " : " + automorphisms.__str__())
+
+    elif file.endswith("GI.grl.txt"):
+        print("Sets of isomorphic graphs")
+        pairs = []
+        for index, first_graph in enumerate(graphs):
+            for index2, second_graph in enumerate(graphs):
+                if first_graph != second_graph:
+                    isomorphisms = count_isomorphism([],[],[first_graph,second_graph],{},0)
+                    if isomorphisms != 0:
+                        pairs.append((index,index2))
+        for group in groups_from_pairs(pairs):
+            print(group)
+    else:
+        return None
+
+
+
+
+def groups_from_pairs(pairs):
+    parent = {}
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[rb] = ra
+
+    for a, b in pairs:
+        union(a, b)
+
+    comps = {}
+    for x in parent:
+        comps.setdefault(find(x), []).append(x)
+    return [sorted(c) for c in comps.values()]
