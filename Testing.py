@@ -2,7 +2,8 @@ from colorref import *
 from colorrefOld import *
 
 
-solver("colorref_largeexampleedt_6_960GIAut.grl.txt")
+
+solver("MyTestFileAut.grl.txt")
 
 # all_vertices ={}
 # for graph in graphs:
@@ -15,8 +16,8 @@ solver("colorref_largeexampleedt_6_960GIAut.grl.txt")
 #     graphs = load_graph(f, Graph, True)
 #
 # all_vertices ={}
-# for graph in graphs:
-#         vertices_colours = {vertex: 0 for vertex in graph.vertices}
-#         all_vertices.update(vertices_colours)
-# print(basic_colorref_old("colorref_smallexampleed_2_49GIAut.grl.txt"))
-# print(count_isomorphism([], [], graphs, all_vertices, 0))
+for graph in graphs:
+        vertices_colours = {vertex: 0 for vertex in graph.vertices}
+        all_vertices.update(vertices_colours)
+print(basic_colorref_old("colorref_smallexampleed_2_49GIAut.grl.txt"))
+print(count_isomorphism([], [], graphs, all_vertices, 0))

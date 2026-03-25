@@ -28,9 +28,6 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
         # Uniform colouring:
         colouring = {v: 0 for v in graphs[0].vertices}
         counter = 1
-        # Colouring based on degree:
-        colouring = {v: v.degree for v in graphs[0].vertices}
-        counter = max(colouring.values()) + 1
 
     #Setup
     sig_table = {}
@@ -120,7 +117,7 @@ def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_
 
 
 
-def count_isomorphism(D, I, graphs, colouring, counter):
+def count_isomorphism(D:list, I:list, graphs, colouring, counter):
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
 
     if not same_class:
@@ -132,7 +129,7 @@ def count_isomorphism(D, I, graphs, colouring, counter):
     graphs_colours= []
     for graph in graphs:
         number_of_vertices = len(graph.vertices)
-        graph_colours = all_vertices.items()[last_stop:last_stop+number_of_vertices]
+        graph_colours = list(all_vertices.items())[last_stop:last_stop+number_of_vertices]
         graphs_colours.append(graph_colours)
         last_stop += number_of_vertices
 
@@ -145,7 +142,9 @@ def count_isomorphism(D, I, graphs, colouring, counter):
     num = 0
     for y in ys:
         all_vertices[y] = selected_colour
-        num = num + count_isomorphism(D + x, I + y, graphs, all_vertices, counter)
+        D.append(x)
+        I.append(y)
+        num = num + count_isomorphism(D, I, graphs, all_vertices, counter)
     return num
 
 
