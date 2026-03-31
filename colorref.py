@@ -2,7 +2,7 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: int = 0):
+def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int], counter: int = 0):
     """
     Apply the color refinement algorithm to a list of graphs.
 
@@ -24,17 +24,26 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
     """
     
     # If no initial colouring was given we give it a (uniform) colouring
+    vertexdict = {}
     if colouring == {}:
         # Uniform colouring:
-        colouring = {v: 0 for v in graphs[0].vertices}
+        for gi, graph in enumerate(graphs):
+            for v in graph.vertices:
+                key = (gi, v)
+                vertexdict[v] = gi
+                colouring[key] = 0
         counter = 1
+    else:
+        for gi, graph in enumerate(graphs):
+            for v in graph.vertices:
+                vertexdict[v] = gi
 
     #Setup
     sig_table = {}
     colour_amount_collection: list[int] = []
     final_iterations: list[int] = []
     is_done:list[bool] = []
-    all_vertices:dict[Vertex, int] = {}
+    all_vertices:dict[tuple[int,Vertex], int] = {}
     final_colours: list[list[int]] = []
 
     last_stop = 0
@@ -56,7 +65,7 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
     while True:
         i += 1
         #Update vertex colours
-        all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
+        all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter, vertexdict)
         
         #Get and store iteration
         last_stop = 0
@@ -102,16 +111,16 @@ def basic_colorref(graphs: list[Graph], colouring: dict[Vertex, int], counter: i
     return same_class, discrete, most_frequent_colour, all_vertices, colour_counter
 
 
-def single_iteration(vertices_colours:dict[Vertex, int], sig_table:dict, colour_counter:int):
+def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:dict, colour_counter:int, vertexdict: dict[Vertex, int]):
     new_vertices_colours = vertices_colours.copy()
-    for vertex in vertices_colours.keys():
-                colour = vertices_colours[vertex]
-                neighbours = tuple(sorted(vertices_colours[neighbour] for neighbour in vertex.neighbours))
+    for key in vertices_colours.keys():
+                colour = vertices_colours[key]
+                neighbours = tuple(sorted(vertices_colours[vertexdict[neighbour], neighbour] for neighbour in key[1].neighbours))
                 if (colour,neighbours) in sig_table:
-                    new_vertices_colours[vertex] = sig_table[(colour,neighbours)]
+                    new_vertices_colours[key] = sig_table[(colour,neighbours)]
                 else:
                     sig_table[(colour,neighbours)] = colour_counter
-                    new_vertices_colours[vertex] = colour_counter
+                    new_vertices_colours[key] = colour_counter
                     colour_counter += 1
     return new_vertices_colours, sig_table, colour_counter
 
