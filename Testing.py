@@ -3,4 +3,4 @@ from colorrefOld import *
 
 
 
-solver("MyTestFileGIAut.grl.txt")
+solver("MyTestFileAut.grl.txt")

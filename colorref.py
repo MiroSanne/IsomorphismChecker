@@ -24,19 +24,13 @@ def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int],
     """
     
     # If no initial colouring was given we give it a (uniform) colouring
-    vertexdict = {}
     if colouring == {}:
         # Uniform colouring:
         for gi, graph in enumerate(graphs):
             for v in graph.vertices:
                 key = (gi, v)
-                vertexdict[v] = gi
                 colouring[key] = 0
         counter = 1
-    else:
-        for gi, graph in enumerate(graphs):
-            for v in graph.vertices:
-                vertexdict[v] = gi
 
     #Setup
     sig_table = {}
@@ -65,7 +59,7 @@ def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int],
     while True:
         i += 1
         #Update vertex colours
-        all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter, vertexdict)
+        all_vertices, sig_table, colour_counter = single_iteration(all_vertices, sig_table, colour_counter)
         
         #Get and store iteration
         last_stop = 0
@@ -111,16 +105,16 @@ def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int],
     return same_class, discrete, most_frequent_colour, all_vertices, colour_counter
 
 
-def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:dict, colour_counter:int, vertexdict: dict[Vertex, int]):
+def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:dict, colour_counter:int):
     new_vertices_colours = vertices_colours.copy()
-    for key in vertices_colours.keys():
-                colour = vertices_colours[key]
-                neighbours = tuple(sorted(vertices_colours[vertexdict[neighbour], neighbour] for neighbour in key[1].neighbours))
+    for index, vertex in vertices_colours.keys():
+                colour = vertices_colours[(index, vertex)]
+                neighbours = tuple(sorted(vertices_colours[(index, neighbour)] for neighbour in vertex.neighbours))
                 if (colour,neighbours) in sig_table:
-                    new_vertices_colours[key] = sig_table[(colour,neighbours)]
+                    new_vertices_colours[(index, vertex)] = sig_table[(colour,neighbours)]
                 else:
                     sig_table[(colour,neighbours)] = colour_counter
-                    new_vertices_colours[key] = colour_counter
+                    new_vertices_colours[(index, vertex)] = colour_counter
                     colour_counter += 1
     return new_vertices_colours, sig_table, colour_counter
 
@@ -128,10 +122,13 @@ def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:di
 
 def count_isomorphism(D:list, I:list, graphs, colouring, counter):
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
-
+    print("checking colours")
     if not same_class:
+        print("failed")
         return 0
+    print("checking discreet")
     if discreet:
+        print("discreet")
         return 1
 
     last_stop = 0
@@ -150,10 +147,13 @@ def count_isomorphism(D:list, I:list, graphs, colouring, counter):
     all_vertices[x] = selected_colour
     num = 0
     for y in ys:
-        all_vertices[y] = selected_colour
-        D.append(x)
-        I.append(y)
-        num = num + count_isomorphism(D, I, graphs, all_vertices, counter)
+        copy_of_all_vertices = all_vertices.copy()
+        copy_of_all_vertices[y] = selected_colour
+        Dy = D.copy()
+        Dy.append(x)
+        Iy = I.copy()
+        Iy.append(y)
+        num = num + count_isomorphism(Dy, Iy, graphs, copy_of_all_vertices, counter)
     return num
 
 
