@@ -2,29 +2,30 @@ from graph import *
 from graph_io import *
 from collections import Counter
 
-def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int], counter: int = 0):
+def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int]= None, counter: int = 0):
     """
-    Apply the color refinement algorithm to a list of graphs.
+    Apply the colour refinement algorithm to a list of graphs.
 
     Input:
-        graphs: list of Graphs
-        colouring: initial colouring represented by a dictionary {Vertex: int}
-        counter: integer representing the next unused colour 
+        graphs: List of Graphs.
+        colouring: Initial colouring represented by a dictionary {tuple[int,Vertex]: int}.
+        counter: Integer representing the next unused colour.
     Output: 
         same_class: bool 
-            True if all graphs are in the same equivalence class
+            True if all graphs are in the same equivalence class.
         discrete: bool
-            True if the colouring is discrete
+            True if the colouring is discrete.
         most_frequent_colour: int
-            The colour that occurs most frequently
+            The colour that occurs most frequently.
         all_vertices: dict[Vertex, int]
-            The final stable colouring
+            The final stable colouring.
         colour_counter: int
-            Updated colour for new colours
+            Updated colour counter representing the next unused colour.
     """
     
     # If no initial colouring was given we give it a (uniform) colouring
-    if colouring == {}:
+    if colouring is None: 
+        colouring = {}:
         # Uniform colouring:
         for gi, graph in enumerate(graphs):
             for v in graph.vertices:
@@ -106,6 +107,21 @@ def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int],
 
 
 def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:dict, colour_counter:int):
+    """
+    Perform one step of the colour refinement algorithm.
+
+    Input:
+        vertices_colours: Current colouring of all vertices.
+        sig_table: A dictionary mapping (current_colour, neighbour_colours) tuples to a colour.
+        colour_counter: Integer representing the next unused colour. 
+    Output: 
+        new_vertices_colours: dict[tuple[int,Vertex], int]
+            The new colouring of all vertices.
+        sig_table: dict
+            Updated signature table.
+        colour_counter: int
+            Updated colour counter.
+    """
     new_vertices_colours = vertices_colours.copy()
     for index, vertex in vertices_colours.keys():
                 colour = vertices_colours[(index, vertex)]
@@ -120,7 +136,20 @@ def single_iteration(vertices_colours:dict[tuple[int,Vertex], int], sig_table:di
 
 
 
-def count_isomorphism(D:list, I:list, graphs, colouring, counter):
+def count_isomorphism(D:list, I:list, graphs:list[Graph], colouring:dict[tuple[int,Vertex], int], counter:int):
+    """
+    Count the number of isomorphisms between two graphs.
+    
+    Input:
+        D: List of vertices from the first graph that have been fixed.
+        I: List of vertices from the second graph that have been fixed.
+        graphs: List containing the two Graphs.
+        colouring: Current colouring.
+        counter: Current colour counter.
+    Output: 
+        num: int
+            Total number of isomorphisms found between the two graphs.
+    """
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
     print("checking colours")
     if not same_class:
@@ -158,7 +187,15 @@ def count_isomorphism(D:list, I:list, graphs, colouring, counter):
 
 
 
-def solver(file):
+def solver(file:str):
+    """
+    Solve the isomorphism or automorphism problem based on the filename suffixes.
+    
+    Input:
+        file: string path to a .grl.txt file.
+    Output: 
+        None. Results are printed directly to the console.
+    """
     with open(file, 'r') as f:
         graphs = load_graph(f, Graph, True)
 
@@ -202,7 +239,15 @@ def solver(file):
 
 
 
-def groups_from_pairs(pairs):
+def groups_from_pairs(pairs:list[tuple[int,int]]):
+    """
+    Organize pairs of isomorphic graphs into distinct equivalence groups.
+    
+    Input:
+        pairs: list of tuples (index1, index2) representing found isomorphisms between graphs.
+    Output: 
+        list[list[int]]: A list of groups, where each group contains the indices of graphs that are isomorphic to each other.
+    """
     parent = {}
     def find(x):
         parent.setdefault(x, x)
