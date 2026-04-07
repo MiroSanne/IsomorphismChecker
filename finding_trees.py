@@ -1,6 +1,11 @@
 from graph import *
 from graph_io import *
 
+
+def tree_isomorphism_algorithm(graphs:list[Graph]):
+    return None
+
+
 def is_graph_a_tree(G:Graph):
     """
     Checking if a Graph can be labeled as a Tree.
