@@ -24,7 +24,7 @@ def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int]=
     """
     
     # If no initial colouring was given we give it a (uniform) colouring
-    if colouring is None: 
+    if colouring is None or colouring == {}: 
         colouring = {}
         # Uniform colouring:
         for gi, graph in enumerate(graphs):
