@@ -151,14 +151,14 @@ def count_isomorphism(D:list, I:list, graphs:list[Graph], colouring:dict[tuple[i
         num: int
             Total number of isomorphisms found between the two graphs.
     """
-    if len(D) != len(I):
-        return 0
     G, H = graphs
+    if len(D) != len(I) or len(G.edges)!=len(H.edges):
+        return 0
     G_tree, H_tree = is_graph_a_tree(G), is_graph_a_tree(H)
     if G_tree != H_tree
         return 0
     elif G_tree:
-        return tree_isomorphism_algorithm(graphs)
+        return count_tree_isomorphisms(graphs)
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
     print("checking colours")
     if not same_class:
