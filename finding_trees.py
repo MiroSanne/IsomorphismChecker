@@ -2,8 +2,74 @@ from graph import *
 from graph_io import *
 
 
-def tree_isomorphism_algorithm(graphs:list[Graph]):
+def count_tree_isomorphisms(graphs:list[Graph]):
+    """
+    Determining how many isomorphisms exist between two Trees.
+
+    Input: Two Graphs (that are Trees)
+    Output: int
+        Representing the amount of isomorphisms.
+    """
+    G, H = graphs
+    root_G, root_H = finding_root_tree(G), finding_root_tree(H)
+    if len(root_G)!= len(root_H):
+        return 0
+    AHU_codes_G, AHU_codes_H = sorted([AHU(r) for r in root_G]), sorted([AHU(r) for r in root_H])
+    if AHU_codes_G != AHU_codes_H:
+        return 0
+    if len(root_G)==2:
+        if AHU_codes_G[0]==AHU_codes_H[1]:
+            return number_of_AHUmorphisms(AHU_codes_G[0]) * 2
+        else:
+            return number_of_AHUmorphisms(AHU_codes_G[0])
+    else:
+        return number_of_AHUmorphisms(AHU_codes_G[0])
+
+
+def number_of_AHUmorphisms(AHU_code:str):
+    if AHU_code == "0":
+        return 1
     return None
+
+
+def AHU(u:Vertex, parent:Vertex=None):
+    """
+    Finding the unique label of the root of a rooted Tree.
+
+    Input: Vertex (that is the root of a rooted Tree)
+    Output: list
+        Contains either one or two vertices depending on the size of the graph.
+    """
+    result = []
+    if u.degree == 1:
+        return "0"
+    for v in u.neighbours:
+        if v!=parent:
+            result.append(AHU(v,u))
+    return "(" + "".join(sorted(result)) + ")"
+
+
+def finding_root_tree(G:Graph):
+    """
+    Finding the root of a tree.
+
+    Input: Graph (that is a Tree)
+    Output: list
+        Contains either one or two roots depending on the size of the graph.
+    """
+    current_degree = {v:v.degree for v in G.vertices}
+    queue = [v for v in G.vertices if current_degree[v]==1]
+    remaining_vertices = len(G.vertices)
+    while remaining_vertices >2:
+        remaining_vertices -= len(queue)
+        new_leaves = []
+        for q in queue:
+            for n in q.neighbours:
+                current_degree[n] -= 1
+                if current_degree[n] == 1:
+                    new_leaves.append(n)
+        queue = new_leaves
+    return queue 
 
 
 def is_graph_a_tree(G:Graph):
