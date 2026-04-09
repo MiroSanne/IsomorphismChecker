@@ -157,7 +157,7 @@ def count_isomorphism(D:list, I:list, graphs:list[Graph], colouring:dict[tuple[i
     G_tree, H_tree = is_graph_a_tree(G), is_graph_a_tree(H)
     if G_tree != H_tree:
         return 0
-    if G_tree:
+    elif G_tree:
         return count_tree_isomorphisms(graphs)
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
     print("checking colours")
