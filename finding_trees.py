@@ -15,7 +15,6 @@ def count_tree_isomorphisms(graphs:list[Graph]):
     if len(root_G)!= len(root_H):
         return 0
     AHU_codes_G, AHU_codes_H = sorted([AHU(r) for r in root_G]), sorted([AHU(r) for r in root_H])
-    print(AHU_codes_G, AHU_codes_H)
     if AHU_codes_G != AHU_codes_H:
         return 0
     if len(root_G)==2:
