@@ -57,7 +57,7 @@ def find_components_of_a_graph(G:Graph):
     return possible_trees
 
 
-def count_forest_isomorphims(graphs:list[Graph]):
+def count_forest_isomorphisms(graphs:list[Graph]):
     """
     Determining how many isomorphisms exist between TWO Forests.
 
