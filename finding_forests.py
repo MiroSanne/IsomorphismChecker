@@ -85,7 +85,6 @@ def count_forest_isomorphisms(graphs:list[Graph]):
     else:
         total_aut = 1
         map_aut = {min(ahu):count_tree_isomorphisms([t,t]) for t, ahu in zip(trees_G, AHU_code_Forest_G)}
-        print(map_aut)
         for substr, n in counting_subtrees([min(ahu) for ahu in AHU_code_Forest_G]).items():
             base_aut = map_aut[substr]
             total_aut *= (base_aut ** n) * math.factorial(n)
