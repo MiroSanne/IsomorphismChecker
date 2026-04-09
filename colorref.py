@@ -1,6 +1,7 @@
 from graph import *
 from graph_io import *
 from finding_trees import *
+from finding_forests import *
 from collections import Counter
 
 def basic_colorref(graphs: list[Graph], colouring: dict[tuple[int,Vertex], int]= None, counter: int = 0):
