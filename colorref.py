@@ -155,7 +155,7 @@ def count_isomorphism(D:list, I:list, graphs:list[Graph], colouring:dict[tuple[i
     if len(D) != len(I) or len(G.edges)!=len(H.edges):
         return 0
     G_tree, H_tree = is_graph_a_tree(G), is_graph_a_tree(H)
-    if G_tree != H_tree
+    if G_tree != H_tree:
         return 0
     elif G_tree:
         return count_tree_isomorphisms(graphs)
