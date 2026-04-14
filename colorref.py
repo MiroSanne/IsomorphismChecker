@@ -166,13 +166,9 @@ def count_isomorphism(D:list, I:list, graphs:list[Graph], colouring:dict[tuple[i
     elif G_Forest:
         return count_forest_isomorphisms(graphs)
     same_class, discreet, most_frequent_colour, all_vertices, counter = basic_colorref(graphs, colouring, counter)
-    print("checking colours")
     if not same_class:
-        print("failed")
         return 0
-    print("checking discreet")
     if discreet:
-        print("discreet")
         return 1
 
     last_stop = 0
